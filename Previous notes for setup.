@@ -1,0 +1,38 @@
+Media Server Setup:
+
+File structuring
+Media
+->Downloads
+-->TV Shows
+-->Movies
+
+The file structuring is set up so that Sonarr connects to TV Shows subfolder, Radarr connects to Movies subfolder, and qBitTorrent connects to the Downloads subfolder. 
+
+Requests:
+Ombi. We set up Ombi by downloading the ZIP on GitHub. We set up Ombi by starting up with Windows by creating a desktop shortcut of the .exe, and sending it to the Startup Programs folder. We configure Ombi to run on Port 5000 of our localhost. After starting up our Ombi server, we visit the backend on our chosen web browser, and typing in localhost:5000. We set up an Admin account, disable authentication if on local. We connect Ombi to Prowlarr, Radarr, Sonarr, and Emby via API keys and our IPV4 address. We make sure on Ombi that each web media server checks for availability. We test each connection and look for any issues logged. There may be authentication issues. We must turn off authentication if it is within your local network.  
+
+Top Layer: 
+Emby. Emby is our media server where we will be playing media. We connect Ombi, Prowlarr, Radarr, and Sonarr to Emby via API keys, and IPV4 address. We configure Emby to talk to our file structure to grab the media downloaded in the folders.
+
+Middle Layers:
+Sonarr. Sonarr is our TV Show media server, where it will download TV Shows and place them into our TV Shows folder. The reason we separate different media genres with different media servers is so we can separate each into different folders so it is easier to configure where each media goes to. Sonarr is connected to Ombi, Prowlarr, Radarr, and Emby. It is configured on Port 8989.
+
+Radarr. Radarr is our Movies media server, where it will download Movies and place them into our Movies folder. Radarr is connected to Ombi, Prowlarr, Sonarr, and Emby. It is configured on Port 7878. 
+
+Bottom Layers:
+QBitTorrent. QBitTorrent is our torrenter. It will be connected to Emby, Ombi, Radarr, Sonarr, and Prowlarr. It is configured on port 8080. We make sure that the Proxy is enabled, and configured to IP Address 10.8.0.1, and Port 1080. This is our Socks5 Proxy, which is configured with Mullvad VPN. We set QBitTorrent to download to the Downloads subfolder in our Folder structuring. We make sure that the file association is .torrent and magnet links. Peer connection protocol is switched from default to TCP. We disable Use UPnP/NAT-PMP port forwarding as we do not need to port forward. We disable authentication (unless you want to heighten your security posture, however you will need to configure that with the rest of the media servers). In our BitTorrent options, we disable all the privacy options but enable encryption and enable anonymous mode. Our network interface is Mullvad, that way it connects to the VPN I am using. Finally, in Web UI we enable Web User Interface. The IP address can be a wildcard *, or it can be localhost, or your IPV4 address. For your information, you can find your local network by going to CMD, and inputting ipconfig /all. We bypass authentication for clients on localhost. 
+
+Prowlarr. Prowlarr is our indexer. It will find indexers and scour the internet for torrents. It will basically feed from the requests from Ombi, and then search for torrents/magnet links via indexers. After searching, it will automatically download (after approval on Ombi) the files and place them into QBitTorrent for download, and automatically place each file into the correct folders via our File Structuring. Prowlarr is configured on Port 9696. Some indexers will need to bypass Cloudflare's authentication. We do this with the built in app FlareSolverr--it is configured with naming the proxy FlareSolverr, adding Cloudflare to the tags, routing the host to http://flaresolverr:8191/. Prowlarr is configured to connect with Ombi, Emby, Radarr, and Sonarr via API Keys, IPV4 Address. We mainly connect to public indexers but we can also connect to private indexers. This is a little more complicated as we need the API keys from those private indexers, as well as authentication and cookies. Authentication is disabled for local addresses, same for certificate validation.  
+
+Notes:
+Indexers will need an account with private indexers, configuring and pasting API keys into the private indexer. 
+Cloudflare solution: May run into problem with indexers that use Cloudflare. Will need to run FlareSolverr within Prowlarr.
+Integrate Sonarr with Prowlarr, configure file structuring to the file structure folder. Sonarr to TV Shows and Radarr to Movies. QBitTorrent configure downloads to Downloads.
+
+VPN:
+Mullvad. This is our VPN. We use it for privacy and for our Socks5 proxy. We configure this by having Mullvad VPN run on Open VPN. We could use Wire Guard but I prefer Open VPN.
+
+Proxy:
+Socks5 Proxy integrated with: Firefox, Mullvad, and QBitTorrent. On FireFox, we navigate to our network settings and enable manual proxy configuration. We make sure that HTTP and HTTPS proxy fields are empty. In the SOCKS Host field, it is configured to 10.8.0.1 and 1080 as our port. 
+
+After all this, the structuring is basically this: Ombi users can request TV Shows or Movies. The admin approves the requests. After approving the requests, the requests are pulled for processing. This goes to Prowlarr, as it searches indexes for said media. After that, it finds the media, places it onto QBitTorrent which then automatically sorts it if it is a TV Show or Movie. After sorting and placing into the correct folder structuring, it downloads the media via Sonarr or Radarr. After that, we navigate to our Media Server Emby and we can watch the media there.
