@@ -28,3 +28,9 @@ The Socks5 Proxy is integrated with Firefox, Mullvad, and qBitTorrent. In Firefo
 
 Workflow Summary
 The structured setup operates as follows: Users request TV shows or movies via Ombi. The admin approves the requests, which are then processed by Prowlarr. Prowlarr searches for the media and sends it to qBitTorrent for downloading. qBitTorrent sorts and places the media into the correct folders. The media is then accessed and played through Emby. This setup ensures a seamless and organized media server experience.
+
+File structuring
+Media
+->Downloads
+-->TV Shows
+-->Movies
