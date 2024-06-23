@@ -2,8 +2,8 @@
 
 Emby
 
-Media Server Setup Documentation
-File Structuring
+Media Server Setup Documentation..
+File Structuring..
 The file structure is organized as follows: the main Media directory contains a Downloads subfolder, which is further divided into TV Shows and Movies subfolders. Sonarr is configured to connect to the TV Shows subfolder, Radarr to the Movies subfolder, and qBitTorrent to the Downloads subfolder.
 
 Requests: Ombi
